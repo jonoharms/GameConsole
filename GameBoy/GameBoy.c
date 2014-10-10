@@ -38,19 +38,17 @@ int main(void)
 	INTERRUPT_DIR(IN); //Set UP_BUTTON I/Os as input.
 	INTERRUPT_SIG_PULLUP();
 
-	BACKLIGHT_SET(ON);
-	
 	while (TRUE)
 	{
 		if (INTERRUPT_SIG)
 		{
 			BAT_LOW_LED(ON);
-			OCR1B = 255; //beep on
+			BACKLIGHT_BRIGHTNESS(255);
 		}
 		else
 		{
 			BAT_LOW_LED(OFF);
-			OCR1B = 15; //beep on
+			BACKLIGHT_BRIGHTNESS(15);
 		}
 	}
 }
