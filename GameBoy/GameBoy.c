@@ -9,20 +9,18 @@
 #include "gameboy.h" 
 
 
-
-
-
-//#define WRITE_PORTC_BIT6(x)  (PORTC = (PORTC & ~_BV(PINC6)) | ((x) << PINC6))
-#define WRITE_PORTD_BIT4(x)  (PORTD = (PORTD & ~_BV(PIND4)) | ((x) << PIND4))
-
-
 int main(void)
 {
 
 	BAT_LOW_LED(OFF); //Make sure it is off before changing direction
 	BAT_LOW_LED_DIR(OUT); //Set BATTERY LED I/Os as outputs.
+	
 	BACKLIGHT_SET(OFF);
 	BACKLIGHT_DIR(OUT);
+	SET_UP_TIMER_REG();
+	PRESCALER_64();
+	
+	
 	UP_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
 	UP_BUTTON_PULLUP();
 	DOWN_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
@@ -47,10 +45,12 @@ int main(void)
 		if (INTERRUPT_SIG)
 		{
 			BAT_LOW_LED(ON);
+			OCR1B = 255; //beep on
 		}
 		else
 		{
 			BAT_LOW_LED(OFF);
+			OCR1B = 15; //beep on
 		}
 	}
 }
