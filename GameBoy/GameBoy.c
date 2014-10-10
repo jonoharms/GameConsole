@@ -75,7 +75,7 @@ int main(void)
 						select_page(page);
 						select_column(column);
 						LCD_data_tx(ON);
-						_delay_ms(5);
+						_delay_ms(1);
 					}
 				}
 				for(int page=7;page>=0; page--) {
@@ -83,7 +83,7 @@ int main(void)
 						select_page(page);
 						select_column(column);
 						LCD_data_tx(OFF);
-						_delay_ms(5);
+						_delay_ms(1);
 					}
 				}
 			//LCD_data_tx(ON); 
