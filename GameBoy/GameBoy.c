@@ -65,39 +65,24 @@ int main(void)
 	}
 	 
 //	SCK_SET_HIGH;
-	
+	byte page = 0;
+	byte column = 0;
 	while (TRUE)
-	{
-		if (INTERRUPT_SIG)
-		{	
-				for(int page=0;page<8; page++) {
-					for(int column = 0; column<102; column++)	{
-						select_page(page);
-						select_column(column);
-						LCD_data_tx(ON);
-						_delay_ms(1);
-					}
-				}
-				for(int page=7;page>=0; page--) {
-					for(int column = 101; column>=0; column--)	{
-						select_page(page);
-						select_column(column);
-						LCD_data_tx(OFF);
-						_delay_ms(1);
-					}
-				}
-			//LCD_data_tx(ON); 
-			BAT_LOW_LED(ON);
-			//LCD_RST_SET_HIGH;
-		//	LCD_data_tx(ON); 
-		}
-		else
-		{
-			//LCD_data_tx(ON); 
-			BAT_LOW_LED(OFF);
-		//	LCD_data_tx(OFF); 
+	{	
+		
+		if(UP_BUTTON) page--; 
+		if(DOWN_BUTTON) page ++; 
+		if(LEFT_BUTTON)column--; 
+		if(RIGHT_BUTTON)column++; 
+		if (page>7) page = 0;
+		if (column>101) column = 0;
+		//if (column)
+		select_page(page); 
+		select_column(column); 
+		LCD_data_tx(0xFF); 
+		_delay_ms(100);
 							
-		}
+		
 	}
 }
 
