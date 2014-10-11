@@ -13,6 +13,9 @@ byte LCD_command_tx(byte tx_byte);
 byte select_page (byte page);
 byte select_column (byte column);
 byte set_all_lcd_pages(byte val);
+byte etch(void);
+
+byte cliFlag = 0;
 
 int main(void)
 {
@@ -40,10 +43,16 @@ int main(void)
 	B_BUTTON_PULLUP();
 	C_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
 	C_BUTTON_PULLUP();
+	
+	//INTERRUPTS
 	INTERRUPT_DIR(IN); //Set UP_BUTTON I/Os as input.
-	INTERRUPT_SIG_PULLUP();
+	INTERRUPT_PULLUP_ENABLE;
+	INTERRUPT_ENABLE;
+	//INTERRUPT_SET_LOGIC_TRIGGER;
+	INTERRUPT_SET_RISING_TRIGGER;
+	//INTERRUPT_SET_FALLING_TRIGGER;
 	
-	
+	//LCD
 	LCD_CHIP_SELECT_DIR(OUT);
 	SCK_SET_DIR(OUT);
 	MOSI_SET_DIR(OUT);
@@ -51,34 +60,41 @@ int main(void)
 	LCD_RST_SET_DIR(OUT);
 	LCD_RST_SET_HIGH;
 	LCD_initialise();
-//	select_page(0); 
-//	select_column();
-//	LCD_data_tx(0xFF); 
-	BACKLIGHT_BRIGHTNESS(127);
 	set_all_lcd_pages(OFF);
+	BACKLIGHT_BRIGHTNESS(127);
+	
+	//Game
+	sei();
+	etch();
+	
+	while(TRUE){
+	}
+}
 
-	 
-//	SCK_SET_HIGH;
+ISR(INT1_vect){
+	BAT_LOW_LED(~BAT_LOW_LED_VAL);
+}
+
+byte etch(void){
 	byte page = 0;
 	byte column = 0;
 	while (TRUE)
-	{	
-		
-		if(UP_BUTTON) page--; 
-		if(DOWN_BUTTON) page ++; 
-		if(LEFT_BUTTON)column--; 
-		if(RIGHT_BUTTON)column++; 
+	{
+			
+		if(UP_BUTTON) page--;
+		if(DOWN_BUTTON) page ++;
+		if(LEFT_BUTTON)column--;
+		if(RIGHT_BUTTON)column++;
 		if (page>7) page = 0;
 		if (column>101) column = 0;
 		//if (column)
-		select_page(page); 
-		select_column(column); 
-		LCD_data_tx(0xFF); 
+		select_page(page);
+		select_column(column);
+		LCD_data_tx(0xFF);
 		_delay_ms(100);
-							
-		
 	}
 }
+
 
 byte select_page (byte page) { 
 	byte page_cmd_address; 
