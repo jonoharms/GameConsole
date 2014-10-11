@@ -7,6 +7,7 @@
 
 #include "gameboy.h" 
 #include "spi.h"
+#include "buttons.h"
 
 
 byte LCD_data_tx(byte tx_byte);
@@ -16,7 +17,7 @@ byte select_page (byte page);
 byte select_column (byte column);
 byte set_all_lcd_pages(byte val);
 byte etch(void);
-void SPI_MasterTransmit(byte data);
+
 
 byte cliFlag = 0;
 
@@ -32,20 +33,7 @@ int main(void)
 	PRESCALER_8();
 	
 	
-	UP_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	UP_BUTTON_PULLUP();
-	DOWN_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	DOWN_BUTTON_PULLUP();
-	LEFT_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	LEFT_BUTTON_PULLUP();
-	RIGHT_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	RIGHT_BUTTON_PULLUP();
-	A_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	A_BUTTON_PULLUP();
-	B_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	B_BUTTON_PULLUP();
-	C_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
-	C_BUTTON_PULLUP();
+	init_buttons();
 	
 	//INTERRUPTS
 	INTERRUPT_DIR(IN); //Set UP_BUTTON I/Os as input.
