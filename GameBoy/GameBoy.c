@@ -2,11 +2,13 @@
  * GameBoy.c
  *
  * Created: 6/10/2014 9:00:26 PM
- *  Author: Jonathon
- surface
+ *  Author: Jonathon Harms 389212
  */ 
 
 #include "gameboy.h" 
+#include "spi.h"
+
+
 byte LCD_data_tx(byte tx_byte);
 byte LCD_initialise(void);
 byte LCD_command_tx(byte tx_byte);
@@ -53,12 +55,7 @@ int main(void)
 	INTERRUPT_SET_RISING_TRIGGER;
 	//INTERRUPT_SET_FALLING_TRIGGER;
 	
-	// SPI Setup
-	SCK_SET_DIR(OUT);
-	MOSI_SET_DIR(OUT);
-	SS_PIN_DIR(OUT);
-	SPI_SETUP;
-	SPI_DOUBLE_SPEED;
+	SPI_MasterInit();
 	
 	//LCD
 	LCD_CHIP_SELECT_DIR(OUT);
@@ -121,14 +118,7 @@ byte select_column (byte column) {
 	return(TRUE); 
 }
 
-void SPI_MasterTransmit(byte data) {
-	/* Start Transmission */
-	SPI_WRITE_DATA(data);
-	/*WAIT UNTIL FINISHED*/
-	while(~SPI_FINISHED) {
-		// DO NOTHING
-	}
-}
+
 
 
 
