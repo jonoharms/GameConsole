@@ -12,6 +12,7 @@ byte LCD_initialise(void);
 byte LCD_command_tx(byte tx_byte);
 byte select_page (byte page);
 byte select_column (byte column);
+byte set_all_lcd_pages(byte val);
 
 int main(void)
 {
@@ -54,15 +55,8 @@ int main(void)
 //	select_column();
 //	LCD_data_tx(0xFF); 
 	BACKLIGHT_BRIGHTNESS(127);
-	
-	for(int page=0;page<8; page++) {
-		for(int column = 0; column<102; column++)	{
-			select_page(page);
-			select_column(column);
-			LCD_data_tx(OFF);
-			//_delay_ms(20);
-		}
-	}
+	set_all_lcd_pages(OFF);
+
 	 
 //	SCK_SET_HIGH;
 	byte page = 0;
@@ -168,5 +162,16 @@ byte LCD_initialise(void) {
 	LCD_command_tx(0x90);//Set Adv. Program Control x00100yz yzcolumn wrap x Temp Comp 
 	LCD_command_tx(0xAF);//Display on 
 	return(TRUE); 
+}
+
+byte set_all_lcd_pages(byte val) {
+		for(int page=0;page<MAX_PAGES; page++) {
+			for(int column = 0; column<MAX_COLUMNS; column++)	{
+				select_page(page);
+				select_column(column);
+				LCD_data_tx(val);
+			}
+		}
+		return(TRUE);
 }
 

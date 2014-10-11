@@ -30,6 +30,11 @@ DESCRIPTION:
 #define FORWARD 0x00
 #define BACK 0xFF
 
+// NUUMBERS
+#define MAX_PAGES 8
+#define MAX_COLUMNS 102
+
+
 /*SET and GET MACRO*/
 #define SET(PORT,MASK,VALUE) PORT = ((MASK & VALUE) | (PORT & ~MASK))
 #define GET(PORT,MASK) PORT & MASK
