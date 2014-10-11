@@ -8,6 +8,7 @@
 #include "gameboy.h" 
 #include "spi.h"
 #include "gpio.h"
+#include "interrupt.h"
 
 
 byte LCD_data_tx(byte tx_byte);
@@ -30,19 +31,10 @@ int main(void)
 	BACKLIGHT_DIR(OUT);
 	SET_UP_TIMER_REG();
 	PRESCALER_8();
-	
-	
+
 	init_gpio();
-	
-	//INTERRUPTS
-	INTERRUPT_DIR(IN); //Set UP_BUTTON I/Os as input.
-	INTERRUPT_PULLUP_ENABLE;
-	INTERRUPT_ENABLE;
-	//INTERRUPT_SET_LOGIC_TRIGGER;
-	INTERRUPT_SET_RISING_TRIGGER;
-	//INTERRUPT_SET_FALLING_TRIGGER;
-	
-	SPI_MasterInit();
+	init_spi();
+	init_ext_interrupts();
 	
 	//LCD
 	LCD_CHIP_SELECT_DIR(OUT);
@@ -55,7 +47,7 @@ int main(void)
 	BACKLIGHT_BRIGHTNESS(127);
 	
 	//Game
-	sei();
+	//sei();
 	etch();
 	
 	while(TRUE){
@@ -111,63 +103,20 @@ byte select_column (byte column) {
 
 byte LCD_data_tx(byte tx_byte) //Sends  a data byte 
 { 
-	
 	LCD_CHIP_SELECT;
 	LCD_DATA_SET_HIGH;
-	SPI_MasterTransmit(tx_byte);
+	spi_tx(tx_byte);
 	LCD_CHIP_DESELECT;
-	
-	/*
-	byte tx_processed; 
-	byte tx_mask = 0x80; 
-	LCD_CHIP_SELECT; 
-	LCD_DATA_SET_HIGH; 
-	while (tx_mask != 0x00) { 
-		tx_processed = tx_byte & tx_mask; 
-		SCK_SET_HIGH; 
-		if(tx_processed) 
-			MOSI_SET_HIGH; 
-		else 
-			MOSI_SET_LOW; 
-		SCK_SET_LOW; 
-		tx_mask>>=1; 
-	} 
-	
-	SCK_SET_HIGH; 
-	LCD_CHIP_DESELECT;
-	*/
 	return(TRUE); 
-	
 }
 
 byte LCD_command_tx(byte tx_byte) //Sends  a data byte
 {
 	LCD_CHIP_SELECT;
 	LCD_DATA_SET_LOW;
-	SPI_MasterTransmit(tx_byte);
-	SCK_SET_HIGH;
+	spi_tx(tx_byte);
 	LCD_CHIP_DESELECT;
-	/*
-	byte tx_processed;
-	byte tx_mask = 0x80;
-	LCD_CHIP_SELECT;
-	LCD_DATA_SET_LOW;
-	while (tx_mask != 0x00) {
-		tx_processed = tx_byte & tx_mask;
-		SCK_SET_HIGH;
-		if(tx_processed)
-		MOSI_SET_HIGH;
-		else
-		MOSI_SET_LOW;
-		SCK_SET_LOW;
-		tx_mask>>=1;
-	}
-	
-	SCK_SET_HIGH;
-	LCD_CHIP_DESELECT;
-	*/
 	return(TRUE);
-	
 }
 
 byte LCD_initialise(void) { 

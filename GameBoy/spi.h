@@ -26,5 +26,5 @@
 #define MISO_SET_LOW SET(PORTB,_BV(PB6),OFF)
 
 // SPI FUNCS
-void SPI_MasterInit(void);
-void SPI_MasterTransmit(byte data);
+void init_spi(void);
+void spi_tx(byte data);

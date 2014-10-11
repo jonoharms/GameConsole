@@ -9,18 +9,17 @@
 
 #include "spi.h"
 
-void SPI_MasterInit(void){
+void init_spi(void){
 		// SPI Setup
 	SCK_SET_DIR(OUT);
 	MOSI_SET_DIR(OUT);
 	SS_PIN_DIR(OUT);
 	SPI_SETUP;
-	SPI_DOUBLE_SPEED;
-	
+	//SPI_DOUBLE_SPEED;
 }
 
 
-void SPI_MasterTransmit(byte data) {
+void spi_tx(byte data) {
 	/* Start Transmission */
 	SPI_WRITE_DATA(data);
 	/*WAIT UNTIL FINISHED*/
