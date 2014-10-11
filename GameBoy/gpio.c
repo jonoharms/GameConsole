@@ -5,9 +5,9 @@
  *  Author: Jonathon
  */ 
 
-#include "buttons.h"
+#include "gpio.h"
 
-void init_buttons(void) {
+void init_gpio(void) {
 	UP_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
 	UP_BUTTON_PULLUP();
 	DOWN_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
@@ -22,4 +22,8 @@ void init_buttons(void) {
 	B_BUTTON_PULLUP();
 	C_BUTTON_DIR(IN); //Set UP_BUTTON I/Os as input.
 	C_BUTTON_PULLUP();
+	
+	
+	BAT_LOW_LED(OFF); //Make sure it is off before changing direction
+	BAT_LOW_LED_DIR(OUT); //Set BATTERY LED I/Os as outputs.
 }

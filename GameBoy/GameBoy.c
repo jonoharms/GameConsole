@@ -7,7 +7,7 @@
 
 #include "gameboy.h" 
 #include "spi.h"
-#include "buttons.h"
+#include "gpio.h"
 
 
 byte LCD_data_tx(byte tx_byte);
@@ -24,8 +24,7 @@ byte cliFlag = 0;
 int main(void)
 {
 
-	BAT_LOW_LED(OFF); //Make sure it is off before changing direction
-	BAT_LOW_LED_DIR(OUT); //Set BATTERY LED I/Os as outputs.
+
 	
 	BACKLIGHT_SET(OFF);
 	BACKLIGHT_DIR(OUT);
@@ -33,7 +32,7 @@ int main(void)
 	PRESCALER_8();
 	
 	
-	init_buttons();
+	init_gpio();
 	
 	//INTERRUPTS
 	INTERRUPT_DIR(IN); //Set UP_BUTTON I/Os as input.

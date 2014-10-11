@@ -110,10 +110,10 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="buttons.c">
+    <Compile Include="gpio.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="buttons.h">
+    <Compile Include="gpio.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="GameBoy.c">

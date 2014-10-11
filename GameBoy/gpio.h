@@ -31,6 +31,11 @@
 #define C_BUTTON ~GET(PINA,_BV(PINA0))
 #define C_BUTTON_PULLUP() SET(PORTA, _BV(PINA0),ON)
 
+//BATTERY LED SETUP
+#define BAT_LOW_LED_DIR(DIR) SET(DDRC,_BV(PINC6),DIR)
+#define BAT_LOW_LED(STATE) SET(PORTC,_BV(PINC6),STATE)
+#define BAT_LOW_LED_VAL GET(PINC,_BV(PINC6))
+
 
 // BUTTON FUNCS
-void init_buttons(void);
+void init_gpio(void);
