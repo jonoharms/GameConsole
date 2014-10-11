@@ -22,9 +22,10 @@
 #define MOSI_SET_LOW SET(PORTB,_BV(PB5),OFF)
 
 #define MISO_SET_DIR(DIR) SET(DDRB,_BV(PB6),DIR)
-#define MISO_SET_HIGH SET(PORTB,_BV(PB6),ON)
+#define MISO_GET GET(PORTB,_BV(PB6))
 #define MISO_SET_LOW SET(PORTB,_BV(PB6),OFF)
 
 // SPI FUNCS
 void init_spi(void);
 void spi_tx(byte data);
+byte spi_txrx(byte data);

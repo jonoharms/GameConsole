@@ -10,7 +10,7 @@
 #include "gpio.h"
 #include "interrupt.h"
 #include "lcd.h"
-
+#include "fram.h"
 
 byte etch(void);
 
@@ -21,8 +21,27 @@ int main(void)
 	init_spi();
 	init_ext_interrupts();
 	init_lcd();
+	init_fram();
+	
+		
+	byte data = 0x07;
+	uint16_t add = 10;
+	write_fram(add,data);
+	byte rec = 0;
+	//rec = read_fram_status();
+	rec = read_fram(add);
+
 	//Game
-	sei();
+
+	
+	for(int i = 0; i<rec; i++){
+		BAT_LOW_LED(ON);
+		_delay_ms((100));
+		BAT_LOW_LED(OFF);
+		_delay_ms((100));
+	}
+	
+	//sei();
 	etch();
 	
 	while(TRUE){
@@ -32,7 +51,6 @@ int main(void)
 ISR(INT1_vect){
 	BAT_LOW_LED(~BAT_LOW_LED_VAL);
 }
-
 
 
 byte etch(void){

@@ -43,7 +43,7 @@ byte select_column (byte column) { //selects column to be written to
 	if(column > MAX_COLUMNS) {
 		column = MAX_COLUMNS-1;
 	}
-	page_cmd_address_LSB =(CMD_COL_LSB | (column&0x0F));
+	page_cmd_address_LSB =(CMD_COL_LSB | (column & 0x0F));
 	page_cmd_address_MSB =(CMD_COL_MSB | (column >> 4));
 	LCD_command_tx(page_cmd_address_LSB);
 	LCD_command_tx(page_cmd_address_MSB);
