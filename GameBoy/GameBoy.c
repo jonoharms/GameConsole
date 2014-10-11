@@ -14,6 +14,7 @@ byte select_page (byte page);
 byte select_column (byte column);
 byte set_all_lcd_pages(byte val);
 byte etch(void);
+void SPI_MasterTransmit(byte data);
 
 byte cliFlag = 0;
 
@@ -52,10 +53,16 @@ int main(void)
 	INTERRUPT_SET_RISING_TRIGGER;
 	//INTERRUPT_SET_FALLING_TRIGGER;
 	
-	//LCD
-	LCD_CHIP_SELECT_DIR(OUT);
+	// SPI Setup
 	SCK_SET_DIR(OUT);
 	MOSI_SET_DIR(OUT);
+	SS_PIN_DIR(OUT);
+	SPI_SETUP;
+	SPI_DOUBLE_SPEED;
+	
+	//LCD
+	LCD_CHIP_SELECT_DIR(OUT);
+
 	LCD_DATA_SET_DIR(OUT);
 	LCD_RST_SET_DIR(OUT);
 	LCD_RST_SET_HIGH;
@@ -75,12 +82,13 @@ ISR(INT1_vect){
 	BAT_LOW_LED(~BAT_LOW_LED_VAL);
 }
 
+
+
 byte etch(void){
 	byte page = 0;
 	byte column = 0;
 	while (TRUE)
 	{
-			
 		if(UP_BUTTON) page--;
 		if(DOWN_BUTTON) page ++;
 		if(LEFT_BUTTON)column--;
@@ -113,10 +121,26 @@ byte select_column (byte column) {
 	return(TRUE); 
 }
 
+void SPI_MasterTransmit(byte data) {
+	/* Start Transmission */
+	SPI_WRITE_DATA(data);
+	/*WAIT UNTIL FINISHED*/
+	while(~SPI_FINISHED) {
+		// DO NOTHING
+	}
+}
+
 
 
 byte LCD_data_tx(byte tx_byte) //Sends  a data byte 
 { 
+	
+	LCD_CHIP_SELECT;
+	LCD_DATA_SET_HIGH;
+	SPI_MasterTransmit(tx_byte);
+	LCD_CHIP_DESELECT;
+	
+	/*
 	byte tx_processed; 
 	byte tx_mask = 0x80; 
 	LCD_CHIP_SELECT; 
@@ -133,13 +157,20 @@ byte LCD_data_tx(byte tx_byte) //Sends  a data byte
 	} 
 	
 	SCK_SET_HIGH; 
-	LCD_CHIP_DESELECT; 
+	LCD_CHIP_DESELECT;
+	*/
 	return(TRUE); 
 	
 }
 
 byte LCD_command_tx(byte tx_byte) //Sends  a data byte
 {
+	LCD_CHIP_SELECT;
+	LCD_DATA_SET_LOW;
+	SPI_MasterTransmit(tx_byte);
+	SCK_SET_HIGH;
+	LCD_CHIP_DESELECT;
+	/*
 	byte tx_processed;
 	byte tx_mask = 0x80;
 	LCD_CHIP_SELECT;
@@ -157,6 +188,7 @@ byte LCD_command_tx(byte tx_byte) //Sends  a data byte
 	
 	SCK_SET_HIGH;
 	LCD_CHIP_DESELECT;
+	*/
 	return(TRUE);
 	
 }
@@ -181,13 +213,13 @@ byte LCD_initialise(void) {
 }
 
 byte set_all_lcd_pages(byte val) {
-		for(int page=0;page<MAX_PAGES; page++) {
-			for(int column = 0; column<MAX_COLUMNS; column++)	{
-				select_page(page);
-				select_column(column);
-				LCD_data_tx(val);
-			}
+	for(int page=0;page<MAX_PAGES; page++) {
+		for(int column = 0; column<MAX_COLUMNS; column++)	{
+			select_page(page);
+			select_column(column);
+			LCD_data_tx(val);
 		}
-		return(TRUE);
+	}
+	return(TRUE);
 }
 
