@@ -21,9 +21,6 @@ int main(void)
 	init_spi();
 	init_ext_interrupts();
 	init_lcd();
-	
-	
-	
 	//Game
 	sei();
 	etch();
@@ -49,7 +46,6 @@ byte etch(void){
 		if(RIGHT_BUTTON)column++;
 		if (page>7) page = 0;
 		if (column>101) column = 0;
-		//if (column)
 		select_page(page);
 		select_column(column);
 		LCD_data_tx(0xFF);

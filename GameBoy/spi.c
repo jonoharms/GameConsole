@@ -10,7 +10,7 @@
 #include "spi.h"
 
 void init_spi(void){
-		// SPI Setup
+	// SPI Setup
 	SCK_SET_DIR(OUT);
 	MOSI_SET_DIR(OUT);
 	SS_PIN_DIR(OUT);

@@ -29,6 +29,9 @@ byte LCD_command_tx(byte tx_byte) //Sends  a data byte as command
 
 byte select_page (byte page) { //selects page to be written to 
 	byte page_cmd_address;
+	if(page > MAX_PAGES) {
+		page = MAX_PAGES-1;
+	}
 	page_cmd_address =(CMD_PAGE | page);
 	LCD_command_tx(page_cmd_address );
 	return(TRUE);
@@ -37,6 +40,9 @@ byte select_page (byte page) { //selects page to be written to
 byte select_column (byte column) { //selects column to be written to
 	byte page_cmd_address_MSB;
 	byte page_cmd_address_LSB;
+	if(column > MAX_COLUMNS) {
+		column = MAX_COLUMNS-1;
+	}
 	page_cmd_address_LSB =(CMD_COL_LSB | (column&0x0F));
 	page_cmd_address_MSB =(CMD_COL_MSB | (column >> 4));
 	LCD_command_tx(page_cmd_address_LSB);
