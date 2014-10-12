@@ -52,3 +52,5 @@ void write_buffer(byte buff[][MAX_PAGES]);
 void setpixel(byte buff[][MAX_PAGES], byte x, byte y);
 void clearpixel(byte buff[][MAX_PAGES], byte x, byte y);
 void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1);
+void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c);
+void drawstring(byte buff[][MAX_PAGES], byte x, byte line, byte *c);
