@@ -38,64 +38,54 @@ int main(void)
 
 ISR(INT1_vect){
 	BAT_LOW_LED(~BAT_LOW_LED_VAL);
-	byte delay = 20;
-	while(INTERRUPT) {
-	if(UP_BUTTON) {
-		y--;
-		//setpixel(buffer,x,y);
-		//_delay_ms(delay);
-	}
-	if(DOWN_BUTTON) {
-		 y++;
-		// setpixel(buffer,x,y);
-		// _delay_ms(delay);
-	}
-	if(LEFT_BUTTON) {
-		x--;
-		//setpixel(buffer,x,y);
-		//_delay_ms(delay);
-	}
-	if(RIGHT_BUTTON) {
-		x++;
-		//setpixel(buffer,x,y);
-		//_delay_ms(delay);
-	}
-	if(A_BUTTON) {
-		clearbuffer(buffer);
-		set_all_lcd_pages(OFF);
-	}
-	if(y<0) {
-		y = LCDHEIGHT;
-	}
-	if (y>LCDHEIGHT) {
-		y = 0;
-	}
-	if (x<0) {
-		x = LCDWIDTH;
-	}
-	if (x>LCDWIDTH) {
-		x = 0;
-	}
-	
-	
-	
-	setpixel(buffer,x,y);
-	_delay_ms(delay);
-	}
+	etch();
 }
 
 
 byte etch(void){
-	byte x = 0;
-	byte y = 0;
-	while (TRUE)
-	{
-		if(UP_BUTTON) y--;
-		if(DOWN_BUTTON) y++;
-		if(LEFT_BUTTON)x--;
-		if(RIGHT_BUTTON)x++;
+	byte delay = 20;
+	while(INTERRUPT) {
+		if(UP_BUTTON) {
+			y--;
+			//setpixel(buffer,x,y);
+			//_delay_ms(delay);
+		}
+		if(DOWN_BUTTON) {
+			y++;
+			// setpixel(buffer,x,y);
+			// _delay_ms(delay);
+		}
+		if(LEFT_BUTTON) {
+			x--;
+			//setpixel(buffer,x,y);
+			//_delay_ms(delay);
+		}
+		if(RIGHT_BUTTON) {
+			x++;
+			//setpixel(buffer,x,y);
+			//_delay_ms(delay);
+		}
+		if(A_BUTTON) {
+			clearbuffer(buffer);
+			set_all_lcd_pages(OFF);
+		}
+		if(y<0) {
+			y = LCDHEIGHT;
+		}
+		if (y>LCDHEIGHT) {
+			y = 0;
+		}
+		if (x<0) {
+			x = LCDWIDTH;
+		}
+		if (x>LCDWIDTH) {
+			x = 0;
+		}
+		
+		
+		
 		setpixel(buffer,x,y);
-		_delay_ms(100);
+		_delay_ms(delay);
 	}
 }
 
