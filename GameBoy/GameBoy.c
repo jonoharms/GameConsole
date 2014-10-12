@@ -17,6 +17,7 @@ byte etch(void);
 byte buffer[MAX_COLUMNS][MAX_PAGES];
 int16_t x = 0;
 int16_t y = 0;
+byte delay = 20;
 
 int main(void)
 {
@@ -40,7 +41,9 @@ ISR(INT1_vect){
 
 
 byte etch(void){
-	byte delay = 20;
+	byte del[10];
+	sprintf(del,"%03d",delay);
+	drawstring(buffer,0,0,del);
 	while(INTERRUPT) {
 		if(UP_BUTTON) {
 			y--;
@@ -58,6 +61,14 @@ byte etch(void){
 			clearbuffer(buffer);
 			set_all_lcd_pages(OFF);
 		}
+		if(B_BUTTON) {
+			delay += 5;
+			_delay_ms(200);
+		}
+		if(C_BUTTON) {
+			delay -= 5;
+			_delay_ms(200);
+		}
 		if(y<0) {
 			y = LCDHEIGHT;
 		}
@@ -70,12 +81,10 @@ byte etch(void){
 		if (x>LCDWIDTH) {
 			x = 0;
 		}
-		
-		
-		
 		setpixel(buffer,x,y);
 		_delay_ms(delay);
 	}
+	return (TRUE);
 }
 
 
