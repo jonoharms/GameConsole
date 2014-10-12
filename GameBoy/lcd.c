@@ -379,3 +379,11 @@ void glcd_circle(byte buff[][MAX_PAGES], byte x, byte y, byte radius, byte fill)
 		P+= 5 + 2*(a++ - b--);
 	} while(a <= b);
 }
+
+void draw_byte(byte buff[][MAX_PAGES], byte x, byte y, byte data) {
+	byte s[4];
+	sprintf(s,"%03d",data);
+	s[3] = NULL;
+	drawstring(buff, x,y,s);
+	return;	
+}

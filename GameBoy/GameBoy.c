@@ -26,8 +26,22 @@ int main(void)
 	init_spi();
 	init_ext_interrupts();
 	init_lcd();
-
-	sei();
+	init_fram();
+	
+	byte data = 0x07;
+	byte s[30];
+	uint16_t address = 0x0001;
+	
+	write_fram(address,data,buffer);
+//	write_fram_sr();
+	byte wc = SPSR;
+	draw_byte(buffer, 0, 0, data); 
+	byte out = read_fram_status();
+	draw_byte(buffer, 0, 1, out); 
+	byte out2 = read_fram(address);
+	sprintf(s,"%03d",out2);
+	draw_byte(buffer, 0, 2, out2); 
+	//sei();
 	while(TRUE){
 		
 		
@@ -36,7 +50,7 @@ int main(void)
 
 ISR(INT1_vect){
 	BAT_LOW_LED(~BAT_LOW_LED_VAL);
-	etch();
+	//etch();
 }
 
 

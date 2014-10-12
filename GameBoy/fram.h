@@ -31,6 +31,6 @@
 
 //FUNCTIONS
 void init_fram(void);
-void write_fram(uint16_t address, byte data);
+//void write_fram(uint16_t address, byte data);
 byte read_fram(uint16_t address);
 byte read_fram_status(void);
