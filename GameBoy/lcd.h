@@ -7,9 +7,12 @@
 
 #include "gameboy.h"
 
+
 // NUMBERS
 #define MAX_PAGES 8
 #define MAX_COLUMNS 102
+#define LCDWIDTH MAX_COLUMNS
+#define LCDHEIGHT MAX_PAGES*8
 #define CMD_PAGE 0xB0
 #define CMD_COL_LSB 0x00
 #define CMD_COL_MSB 0x10
@@ -45,3 +48,9 @@ byte select_page (byte page);
 byte select_column (byte column);
 byte init_lcd(void);
 byte set_all_lcd_pages(byte val);
+void write_buffer(byte buff[][MAX_PAGES]);
+void setpixel(byte buff[][MAX_PAGES], byte x, byte y);
+void clearpixel(byte buff[][MAX_PAGES], byte x, byte y);
+void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1);
+void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c);
+void drawstring(byte buff[][MAX_PAGES], byte x, byte line, byte *c);

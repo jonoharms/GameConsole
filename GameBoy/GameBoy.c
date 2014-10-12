@@ -10,9 +10,12 @@
 #include "gpio.h"
 #include "interrupt.h"
 #include "lcd.h"
-
+#include "fram.h"
 
 byte etch(void);
+
+byte buffer[MAX_COLUMNS][MAX_PAGES];
+
 
 int main(void)
 {
@@ -21,18 +24,78 @@ int main(void)
 	init_spi();
 	init_ext_interrupts();
 	init_lcd();
-	//Game
-	sei();
-	etch();
+	//init_fram();
 	
+		/*
+	byte data = 0x07;
+	data = 0x08;
+	uint16_t add = 10;
+	write_fram(add,data);
+	byte rec = 0;
+	//rec = read_fram_status();
+	rec = read_fram(add);
+
+	//Game
+
+	
+	for(int i = 0; i<rec; i++){
+		BAT_LOW_LED(ON);
+		_delay_ms((100));
+		BAT_LOW_LED(OFF);
+		_delay_ms((100));
+	}
+	*/
+	//sei();
+	//etch();
+	uint8_t string1[] = {0x41,0x42,0x43,0x44,0x45,0x00};
+	uint8_t string2[] = {'A','B','C','D','E',0x00};
+	byte string3[127];
+	for (int i = 0; i<127; i++) {
+		string3[i] = i+0x20;
+	}
+	string3[127-0x20] = 0;
+	for (byte i= 0; i<MAX_PAGES; i++) {
+		for(byte j = 0; j<MAX_COLUMNS; j++) {
+			buffer[j][i] = 0x00;
+		}
+	}
+	drawchar(buffer,30,2,0x41);
+	_delay_ms(3000);
+	drawstring(buffer,30,3,string1);
+	drawstring(buffer,30,4,string2);
+	drawstring(buffer,0,0,string3);
+//	_delay_ms(3000);
+	/*
+	drawline(buffer,0, 0, 45, 45);
+	_delay_ms(200);
+	drawline(buffer,45, 45, 0, 45);
+	_delay_ms(200);
+	drawline(buffer,0, 45, 100, 60);
+	_delay_ms(200);
+	for (int i=0; i<LCDWIDTH ; i++) {
+		for (int j = 0; j<LCDHEIGHT; j++) {
+			setpixel(buffer,i,j);
+			_delay_ms(1);
+		}
+	}
+		for (int i=0; i<LCDWIDTH ; i+=5) {
+			for (int j = 0; j<LCDHEIGHT; j+=3) {
+				clearpixel(buffer,i,j);
+				_delay_ms(1);
+			}
+		}
+	//write_buffer(buffer);
+	
+	*/
 	while(TRUE){
+		
+		
 	}
 }
 
 ISR(INT1_vect){
 	BAT_LOW_LED(~BAT_LOW_LED_VAL);
 }
-
 
 
 byte etch(void){

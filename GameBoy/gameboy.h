@@ -11,6 +11,7 @@ DESCRIPTION:
 *************************************************************************/
 #define F_CPU 8000000UL
 #include <avr/io.h>
+#include <stdlib.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
@@ -33,6 +34,6 @@ DESCRIPTION:
 /*SET and GET MACRO*/
 #define SET(PORT,MASK,VALUE) PORT = ((MASK & VALUE) | (PORT & ~MASK))
 #define GET(PORT,MASK) PORT & MASK
-
+#define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
 
