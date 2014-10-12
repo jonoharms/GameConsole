@@ -56,7 +56,7 @@ byte init_lcd(void) { // initialize lcd, must be run prior to using lcd
 	BACKLIGHT_DIR(OUT);
 	SET_UP_TIMER_REG();
 	PRESCALER_8();
-	BACKLIGHT_BRIGHTNESS(127);
+	BACKLIGHT_BRIGHTNESS(0);
 	
 	//LCD
 	LCD_CHIP_SELECT_DIR(OUT);
@@ -94,3 +94,89 @@ byte set_all_lcd_pages(byte val) {  //sets all pages to val
 	return(TRUE);
 }
 
+/* Everything Below is adapted from
+from https://github.com/adafruit/ST7565-LCD */
+  
+void write_buffer(byte buff[][MAX_PAGES]) {
+
+  byte c, p;
+  
+  for(p = 0; p < MAX_PAGES; p++) {
+
+    select_page(p);
+	select_column(0x00);    
+    for(c = 0; c < MAX_COLUMNS; c++) {
+	  select_column(c);
+      LCD_data_tx(buff[c][p]);
+    }
+  }
+}
+
+void setpixel(byte buff[][MAX_PAGES], byte x, byte y) {
+	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
+	return;
+
+	// x is which column
+	byte page = y/8;
+	byte pixel = y%8;
+	pixel = (_BV(pixel) | (buff[x][page])); 
+	
+	select_page(page);
+	select_column(x);
+	buff[x][page] |= pixel;
+	LCD_data_tx(pixel);
+}
+
+void clearpixel(byte buff[][MAX_PAGES], byte x, byte y) {
+	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
+	return;
+
+	// x is which column
+	byte page = y/8;
+	byte pixel = y%8;
+	pixel = ((~_BV(pixel) & 0xff) & (buff[x][page]));
+	
+	select_page(page);
+	select_column(x);
+	buff[x][page] &= pixel;
+	LCD_data_tx(pixel);
+}
+
+void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1) {
+
+	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep) {
+		swap(x0, y0);
+		swap(x1, y1);
+	}
+
+	if (x0 > x1) {
+		swap(x0, x1);
+		swap(y0, y1);
+	}
+
+	uint8_t dx, dy;
+	dx = x1 - x0;
+	dy = abs(y1 - y0);
+
+	int8_t err = dx / 2;
+	int8_t ystep;
+
+	if (y0 < y1) {
+		ystep = 1;
+		} else {
+	ystep = -1;}
+
+	for (; x0<x1; x0++) {
+		if (steep) {
+			setpixel(buff, y0, x0);
+			} else {
+			setpixel(buff, x0, y0);
+		}
+		err -= dy;
+		if (err < 0) {
+			y0 += ystep;
+			err += dx;
+		}
+	}
+}
