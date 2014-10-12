@@ -5,7 +5,7 @@
  *  Author: Jonathon
  */ 
 
-/*
+
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 
@@ -107,4 +107,3 @@ const uint8_t font[] PROGMEM  =
 	0x41, 0x41, 0x36, 0x08, 0x00, // }
 	0x02, 0x01, 0x02, 0x04, 0x02};// ~
 	
-*/

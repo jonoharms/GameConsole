@@ -16,6 +16,11 @@
 #define CMD_PAGE 0xB0
 #define CMD_COL_LSB 0x00
 #define CMD_COL_MSB 0x10
+#define MAX_ASCII 0x7D
+#define MIN_ASCII 0x20
+#define FONT_WIDTH 0x05
+#define FONT_HEIGHT 0x07
+#define FONT_SPACE 0x01
 
 // BACKLIGHT SETUP
 #define BACKLIGHT_DIR(DIR) SET(DDRD,_BV(PIND4),DIR)
@@ -54,3 +59,5 @@ void clearpixel(byte buff[][MAX_PAGES], byte x, byte y);
 void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1);
 void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c);
 void drawstring(byte buff[][MAX_PAGES], byte x, byte line, byte *c);
+void clearbuffer(byte buff[][MAX_PAGES]);
+void glcd_rect(byte buff[][MAX_PAGES], byte x1, byte y1, byte x2, byte y2, byte fill);
