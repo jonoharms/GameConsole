@@ -25,13 +25,13 @@ int main(void)
 	init_ext_interrupts();
 	init_lcd();
 	glcd_rect(buffer, 30, 30, 40 , 40, TRUE);
-	_delay_ms(3000);
+	//_delay_ms(3000);
 	glcd_bar(buffer, 40, 40, 0, 0, 2);
-	_delay_ms(3000);
+//	_delay_ms(3000);
 	glcd_bar(buffer, 0, 0, 30, 10, 5);
-	_delay_ms(3000);
+//	_delay_ms(3000);
 	glcd_circle(buffer,50,50,10,FALSE);
-	_delay_ms(3000);
+//	_delay_ms(3000);
 	//init_fram();
 	
 		/*
@@ -63,12 +63,13 @@ int main(void)
 	}
 	string3[127-0x20] = 0;
 	clearbuffer(buffer);
+	set_all_lcd_pages(OFF);
 	drawchar(buffer,30,2,0x41);
 	_delay_ms(3000);
 	drawstring(buffer,30,3,string1);
 	drawstring(buffer,30,4,string2);
 	drawstring(buffer,0,0,string3);
-//	_delay_ms(3000);
+	_delay_ms(3000);
 	/*
 	drawline(buffer,0, 0, 45, 45);
 	_delay_ms(200);
