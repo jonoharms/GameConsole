@@ -27,9 +27,6 @@ int main(void)
 	init_lcd();
 
 	sei();
-	//etch();
-	//write_buffer(buffer);
-	
 	while(TRUE){
 		
 		
@@ -47,23 +44,15 @@ byte etch(void){
 	while(INTERRUPT) {
 		if(UP_BUTTON) {
 			y--;
-			//setpixel(buffer,x,y);
-			//_delay_ms(delay);
 		}
 		if(DOWN_BUTTON) {
 			y++;
-			// setpixel(buffer,x,y);
-			// _delay_ms(delay);
 		}
 		if(LEFT_BUTTON) {
 			x--;
-			//setpixel(buffer,x,y);
-			//_delay_ms(delay);
 		}
 		if(RIGHT_BUTTON) {
 			x++;
-			//setpixel(buffer,x,y);
-			//_delay_ms(delay);
 		}
 		if(A_BUTTON) {
 			clearbuffer(buffer);
