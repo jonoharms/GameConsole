@@ -183,13 +183,13 @@ void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1) {
 }
 
 void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c) {
+	
 	if((c>MAX_ASCII) || (c<MIN_ASCII)) 
 		return;
-
+	c -= MIN_ASCII;
 	
 	for (uint8_t i=0; i<FONT_WIDTH; i++ ) {
-		uint16_t temp = FONT_WIDTH*(c-MIN_ASCII);
-		byte ascii = pgm_read_byte(font+temp+i);
+		byte ascii = pgm_read_byte(font+FONT_WIDTH*c+i);
 		buff[x][line] = ascii;
 		select_page(line);
 		select_column(x);
