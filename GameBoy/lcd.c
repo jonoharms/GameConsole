@@ -57,7 +57,7 @@ byte init_lcd(void) { // initialize lcd, must be run prior to using lcd
 	BACKLIGHT_DIR(OUT);
 	SET_UP_TIMER_REG();
 	PRESCALER_8();
-	BACKLIGHT_BRIGHTNESS(0);
+	BACKLIGHT_BRIGHTNESS(50);
 	
 	//LCD
 	LCD_CHIP_SELECT_DIR(OUT);
@@ -378,4 +378,12 @@ void glcd_circle(byte buff[][MAX_PAGES], byte x, byte y, byte radius, byte fill)
 		else
 		P+= 5 + 2*(a++ - b--);
 	} while(a <= b);
+}
+
+void draw_byte(byte buff[][MAX_PAGES], byte x, byte y, byte data) {
+	byte s[4];
+	sprintf(s,"%03d",data);
+	s[3] = NULL;
+	drawstring(buff, x,y,s);
+	return;	
 }
