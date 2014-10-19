@@ -19,44 +19,38 @@ void init_fram(void) {
 	//WP_ENABLE;
 }
 
-void write_fram(uint16_t address, byte data,byte buffer[][MAX_PAGES]) {
-//	byte msb = ((address>>8) & 0xff);
-	byte lsb = address & 0x00ff;
-//	byte temp = ((msb<<3) & WR_MASK);
-//	byte msb = (byte) temp;
+int8_t write_fram(uint16_t address, byte *buf, byte count) {
+	byte msb = ((address>>8) & 0xff);
+	byte lsb = address & 0xff;
+
 	FRAM_CHIP_SELECT;
 	spi_tx(CMD_WREN);
 	FRAM_CHIP_DESELECT;
-	_delay_ms(200);
-	
-	
-	byte out = read_fram_status();
-	draw_byte(buffer, 0, 5, out);
 	
 	
 	FRAM_CHIP_SELECT;
 	spi_tx(CMD_WRITE);
+	spi_tx(msb);
 	spi_tx(lsb);
-	spi_tx(data);
-	spi_tx(data);
+	for (int i = 0;i < count;i++) {
+		spi_tx(buf[i]);
+	}
 	FRAM_CHIP_DESELECT;
-	
-	out = read_fram_status();
-	draw_byte(buffer, 0, 6, out);
-	
 }
 
-byte read_fram(uint16_t address) {
-//	byte out = 0;
-	//byte msb = ((address>>8) & 0xff);
-	byte lsb = address & 0x00ff;
-	//byte temp = ((msb<<3) & WR_MASK);
+int8_t read_fram(uint16_t address, byte *buf, byte count) {
+	byte msb = ((address>>8) & 0xff);
+	byte lsb = address & 0xff;
+	
 	FRAM_CHIP_SELECT;
 	spi_tx(CMD_READ);
+	spi_tx(msb);
 	spi_tx(lsb);
-	byte out = spi_txrx(0x00);
+	for (int i=0; i < count; i++) {
+		buf[i] = spi_txrx(0x00);
+	}
 	FRAM_CHIP_DESELECT;
-	return out;
+	return 0;
 }
 
 byte read_fram_status(void) {

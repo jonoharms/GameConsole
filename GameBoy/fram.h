@@ -28,9 +28,8 @@
 #define CMD_READ 0x03
 #define CMD_WRITE 0x02
 #define WR_MASK 0x08
+#define MAX_ADDRESS 0x7ff
 
 //FUNCTIONS
 void init_fram(void);
 //void write_fram(uint16_t address, byte data);
-byte read_fram(uint16_t address);
-byte read_fram_status(void);
