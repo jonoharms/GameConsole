@@ -381,9 +381,9 @@ void glcd_circle(byte buff[][MAX_PAGES], byte x, byte y, byte radius, byte fill)
 }
 
 void draw_byte(byte buff[][MAX_PAGES], byte x, byte y, byte data) {
-	byte s[4];
+	char s[4];
 	sprintf(s,"%03d",data);
-	s[3] = NULL;
-	drawstring(buff, x,y,s);
+	s[3] = 0x00;
+	drawstring(buff, x,y,(byte*) s);
 	return;	
 }

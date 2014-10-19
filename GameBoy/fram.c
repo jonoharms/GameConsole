@@ -36,6 +36,7 @@ int8_t write_fram(uint16_t address, byte *buf, byte count) {
 		spi_tx(buf[i]);
 	}
 	FRAM_CHIP_DESELECT;
+	return 0;
 }
 
 int8_t read_fram(uint16_t address, byte *buf, byte count) {

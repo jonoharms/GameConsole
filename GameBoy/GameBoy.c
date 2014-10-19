@@ -17,7 +17,7 @@ byte etch(void);
 byte buffer[MAX_COLUMNS][MAX_PAGES];
 int16_t x = 0;
 int16_t y = 0;
-byte delay = 20;
+int delay = 20;
 
 int main(void)
 {
@@ -28,8 +28,8 @@ int main(void)
 	init_lcd();
 	init_fram();
 	
-	char buf[]="This is a test";
-	byte s[30];
+	char buf[]="This is a test 7";
+
 	uint16_t address = 0x0001;
 
 	write_fram(address,(byte *)buf,14);
@@ -37,10 +37,8 @@ int main(void)
 
     read_fram(address,(byte *)buf,14);
 	drawstring(buffer, 0, 2, (byte *)  buf); 
-	_delay_ms(3000);
-	clearbuffer(buffer);
-	set_all_lcd_pages(OFF);
 	sei();
+	write_buffer(buffer);
 	while(TRUE){
 		
 		
@@ -54,9 +52,9 @@ ISR(INT1_vect){
 
 
 byte etch(void){
-	byte del[10];
-	sprintf(del,"%03d",delay);
-	drawstring(buffer,0,0,del);
+//	byte del[10];
+//	sprintf((byte) del,"%03d",delay);
+//	drawstring(buffer,0,0,del);
 	while(INTERRUPT) {
 		if(UP_BUTTON) {
 			y--;
@@ -83,19 +81,19 @@ byte etch(void){
 			_delay_ms(200);
 		}
 		if(y<0) {
-			y = LCDHEIGHT;
+			y = LCDHEIGHT-1;
 		}
-		if (y>LCDHEIGHT) {
+		if (y>=LCDHEIGHT) {
 			y = 0;
 		}
 		if (x<0) {
-			x = LCDWIDTH;
+			x = LCDWIDTH-1;
 		}
-		if (x>LCDWIDTH) {
+		if (x>=LCDWIDTH) {
 			x = 0;
 		}
-		setpixel(buffer,x,y);
-		_delay_ms(delay);
+		setpixel(buffer,(byte)x,(byte)y);
+		_delay_ms(30);
 	}
 	return (TRUE);
 }
