@@ -9,7 +9,6 @@
 
 #include "spi.h"
 #include "fram.h"
-#include "lcd.h"
 
 void init_spi(void){
 	// SPI Setup
@@ -19,7 +18,6 @@ void init_spi(void){
 	SS_PIN_DIR(OUT);
 	SPI_SETUP;
 	SPI_MODE_3;
-	//SPI_MODE_0;
 	SPI_DOUBLE_SPEED;
 	LCD_CHIP_DESELECT;
 	FRAM_CHIP_DESELECT;

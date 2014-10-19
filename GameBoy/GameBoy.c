@@ -37,7 +37,10 @@ int main(void)
 
     read_fram(address,(byte *)buf,14);
 	drawstring(buffer, 0, 2, (byte *)  buf); 
-	//sei();
+	_delay_ms(3000);
+	clearbuffer(buffer);
+	set_all_lcd_pages(OFF);
+	sei();
 	while(TRUE){
 		
 		
@@ -46,7 +49,7 @@ int main(void)
 
 ISR(INT1_vect){
 	BAT_LOW_LED(~BAT_LOW_LED_VAL);
-	//etch();
+	etch();
 }
 
 
