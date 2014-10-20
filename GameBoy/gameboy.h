@@ -15,6 +15,7 @@ DESCRIPTION:
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
+#include <string.h>
 
 #define byte unsigned char
 
@@ -34,6 +35,6 @@ DESCRIPTION:
 /*SET and GET MACRO*/
 #define SET(PORT,MASK,VALUE) PORT = ((MASK & VALUE) | (PORT & ~MASK))
 #define GET(PORT,MASK) PORT & MASK
-#define swap(a, b) { uint8_t t = a; a = b; b = t; }
+#define swap(a, b) { byte t = a; a = b; b = t; }
 
 

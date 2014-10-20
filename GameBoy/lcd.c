@@ -57,6 +57,7 @@ byte init_lcd(void) { // initialize lcd, must be run prior to using lcd
 	BACKLIGHT_DIR(OUT);
 	SET_UP_TIMER_REG();
 	PRESCALER_8();
+	//PRESCALER_64();
 	BACKLIGHT_BRIGHTNESS(50);
 	
 	//LCD
