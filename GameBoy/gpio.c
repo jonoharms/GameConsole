@@ -27,7 +27,7 @@ void init_gpio(void) {
 	BAT_LOW_LED(OFF); //Make sure it is off before changing direction
 	BAT_LOW_LED_DIR(OUT); //Set BATTERY LED I/Os as outputs.
 	
-	SET(TCCR0, _BV(CS02) | _BV(CS00), ON);		// SET 1024 Prescaler
+	SET(TCCR0,( _BV(CS02) | _BV(CS00) ), ON);		// SET 1024 Prescaler
 	SET(TIMSK, _BV(TOIE0), ON);					// ENABLE INTERRUPT OVERFLOW	
 	
 	SET(ADCSRA, _BV(ADEN), ON);					// ENABLE ADC
