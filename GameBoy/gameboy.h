@@ -34,6 +34,6 @@ DESCRIPTION:
 /*SET and GET MACRO*/
 #define SET(PORT,MASK,VALUE) PORT = ((MASK & VALUE) | (PORT & ~MASK))
 #define GET(PORT,MASK) PORT & MASK
-#define swap(a, b) { uint8_t t = a; a = b; b = t; }
+#define swap(a, b) { byte t = a; a = b; b = t; }
 
 

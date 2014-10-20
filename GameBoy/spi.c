@@ -9,6 +9,7 @@
 
 #include "spi.h"
 #include "fram.h"
+#include "lcd.h"
 
 void init_spi(void){
 	// SPI Setup

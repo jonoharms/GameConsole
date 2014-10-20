@@ -37,8 +37,10 @@ int main(void)
 
     read_fram(address,(byte *)buf,14);
 	drawstring(buffer, 0, 2, (byte *)  buf); 
+	
+	ADCSRA |= 1<<ADSC;
+	
 	sei();
-	write_buffer(buffer);
 	while(TRUE){
 		
 		
@@ -46,8 +48,28 @@ int main(void)
 }
 
 ISR(INT1_vect){
-	BAT_LOW_LED(~BAT_LOW_LED_VAL);
 	etch();
+}
+
+ISR(TIMER0_OVF_vect){
+	// DO NOTHING EXCEPT CLEAR THE FLAG
+}
+
+ISR(ADC_vect)
+{
+	uint16_t val;
+	byte lsb = ADCL;
+	byte msb = ADCH;
+	val = (msb << 8) | lsb ;
+	char s[15];
+	float voltage = ((float)val)*2.56/1024.0;
+		
+	if (voltage < 1.1) {
+		BAT_LOW_LED(ON);
+		sprintf(s, "LowBatt: %.2fV", voltage);
+		s[14] = 0x00;
+		drawstring(buffer, 0,7,(byte*) s);
+	}
 }
 
 
