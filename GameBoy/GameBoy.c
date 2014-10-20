@@ -15,9 +15,11 @@
 byte etch(void);
 
 byte buffer[MAX_COLUMNS][MAX_PAGES];
-int16_t x = 0;
-int16_t y = 0;
-int delay = 20;
+int16_t x = 51;
+int16_t y = 32;
+uint16_t count = 0;
+byte brightness = 50;
+byte width = 1;
 
 int main(void)
 {
@@ -27,9 +29,9 @@ int main(void)
 	init_ext_interrupts();
 	init_lcd();
 	init_fram();
+	BACKLIGHT_BRIGHTNESS(brightness);
+	char buf[]="WELCOME STRANGER";
 	
-	char buf[]="This is a test 7";
-
 	uint16_t address = 0x0001;
 
 	write_fram(address,(byte *)buf,14);
@@ -37,6 +39,10 @@ int main(void)
 
     read_fram(address,(byte *)buf,14);
 	drawstring(buffer, 0, 2, (byte *)  buf); 
+	
+	_delay_ms(1000);
+	clearbuffer(buffer);
+	set_all_lcd_pages(OFF);
 	
 	ADCSRA |= 1<<ADSC;
 	
@@ -63,20 +69,19 @@ ISR(ADC_vect)
 	val = (msb << 8) | lsb ;
 	char s[15];
 	float voltage = ((float)val)*2.56/1024.0;
-		
-	if (voltage < 1.1) {
+	count++;
+	if ((voltage < 1.1 ) && (count>30) ) {
 		BAT_LOW_LED(ON);
 		sprintf(s, "LowBatt: %.2fV", voltage);
 		s[14] = 0x00;
+		count = 0;
 		drawstring(buffer, 0,7,(byte*) s);
 	}
 }
 
 
 byte etch(void){
-//	byte del[10];
-//	sprintf((byte) del,"%03d",delay);
-//	drawstring(buffer,0,0,del);
+
 	while(INTERRUPT) {
 		if(UP_BUTTON) {
 			y--;
@@ -91,31 +96,50 @@ byte etch(void){
 			x++;
 		}
 		if(A_BUTTON) {
+			x = 51;
+			y = 32;
+			width = 1;
 			clearbuffer(buffer);
 			set_all_lcd_pages(OFF);
 		}
 		if(B_BUTTON) {
-			delay += 5;
+			if (brightness == 0) {
+				brightness = 255;
+			} else if (brightness < 25) {
+				brightness = 0;
+			} else {
+				brightness -= 25;
+			}
+			BACKLIGHT_BRIGHTNESS(brightness);
 			_delay_ms(200);
 		}
 		if(C_BUTTON) {
-			delay -= 5;
+			if (width > 8) {
+				width = 1;
+			} else {
+				width +=2;
+			}
 			_delay_ms(200);
 		}
-		if(y<0) {
-			y = LCDHEIGHT-1;
+		if((y-width/2)<0) {
+			y = LCDHEIGHT-1-width/2;
 		}
-		if (y>=LCDHEIGHT) {
-			y = 0;
+		if ((y+width/2)>=LCDHEIGHT) {
+			y = width/2;
 		}
-		if (x<0) {
-			x = LCDWIDTH-1;
+		if ((x-width/2)<0) {
+			x = LCDWIDTH-1-width/2;
 		}
-		if (x>=LCDWIDTH) {
-			x = 0;
+		if ((x+width/2)>=LCDWIDTH) {
+			x = width/2;
 		}
-		setpixel(buffer,(byte)x,(byte)y);
-		_delay_ms(30);
+		//
+		if (width < 2) {
+			setpixel(buffer,(byte)x,(byte)y);
+		} else {
+			glcd_rect(buffer,  x-width/2 , y-width/2, x+width/2 , y+width/2 , TRUE);
+		}
+		_delay_ms(20);
 	}
 	return (TRUE);
 }
