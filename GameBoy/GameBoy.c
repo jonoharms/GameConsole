@@ -14,62 +14,53 @@
 
 byte etch(void);
 
-typedef struct game_t {
-	byte buffer[MAX_COLUMNS][MAX_PAGES];
-	int16_t x;
-	int16_t y;
-	byte brightness;
-	byte width;
-} game_t;
 
-game_t game;
-uint16_t count;
+uint16_t count = 0;
+uint16_t count2 = 0;
+byte buffer[MAX_COLUMNS][MAX_PAGES];
+int16_t x;
+int16_t y;
+byte brightness = 50;
+byte width = 1;
+uint16_t x_address = 0x0000;
+uint16_t y_address = 0x0002;
+uint16_t buffer_address = 0x0100;
 
 int main(void)
 {
-	clearbuffer(game.buffer);
-	game.x = LCDWIDTH/2;
-	game.y = LCDHEIGHT/2;
-	game.brightness = 50;
-	game.width = 1;
-	BACKLIGHT_BRIGHTNESS(game.brightness);
-	
-	byte b[sizeof(game)];
-	memcpy(b, &game, sizeof(game));
-//	write_fram(0x0000, b, sizeof(game));
-	
-	_delay_ms(1000);
-
-//	read_fram(0x0000, b, sizeof(game));
-	memcpy(&game, b, sizeof(game));
-	
-					
+	clearbuffer(buffer);
+	x = LCDWIDTH/2;
+	y = LCDHEIGHT/2;
+	brightness = 50;
+	width = 1;
+	BACKLIGHT_BRIGHTNESS(brightness);
+						
 	init_gpio();
 	init_spi();
 	init_ext_interrupts();
 	init_lcd();
 	init_fram();
 	
-	
-	char buf[]="WELCOME STRANGER";
-	
-	uint16_t address = 0x0001;
-
-	write_fram(address,(byte *)buf,14);
-	drawstring(game.buffer, 0, 0, (byte *) buf); 
-
-    read_fram(address,(byte *)buf,14);
-	drawstring(game.buffer, 0, 2, (byte *)  buf); 
-	
+	char buf[]="WELCOME";
+	drawstring(buffer, 0, 0, (byte *) buf); 
 	_delay_ms(1000);
-	clearbuffer(game.buffer);
+	
+	byte x_byte[2];
+	byte y_byte[2];
+	read_fram(x_address,x_byte,2);
+	read_fram(y_address,y_byte,2);
+	
+	for(byte i=0; i<MAX_COLUMNS; i++) {
+		read_fram(buffer_address+i*MAX_COLUMNS, buffer[i], MAX_PAGES);
+	}	
+	memcpy(&x,x_byte,2);
+	memcpy(&y,y_byte,2);
+	//y = pos[1];
 	set_all_lcd_pages(OFF);
+	write_buffer(buffer);
 	
 	ADCSRA |= 1<<ADSC;
-	
-	sei();
-
-		
+	sei();	
 	while(TRUE){
 
 	}
@@ -79,8 +70,23 @@ ISR(INT1_vect){
 	etch();
 }
 
-ISR(TIMER0_OVF_vect){
-	// DO NOTHING EXCEPT CLEAR THE FLAG
+ISR(TIMER0_OVF_vect) {
+	cli();
+	count2++;
+	byte x_byte[2];
+	byte y_byte[2];
+	memcpy(x_byte,&x,2);
+	memcpy(y_byte,&y,2);
+
+	if (count2>10) {
+		for(byte i=0; i<MAX_COLUMNS; i++) {
+			write_fram(buffer_address+i*MAX_COLUMNS, buffer[i], MAX_PAGES);
+		}
+		write_fram(x_address, x_byte , 2);
+		write_fram(y_address, y_byte , 2);
+		count2 = 0;
+	}
+	sei();
 }
 
 ISR(ADC_vect)
@@ -96,8 +102,7 @@ ISR(ADC_vect)
 		BAT_LOW_LED(ON);
 		sprintf(s, "LowBatt: %.2fV", voltage);
 		s[14] = 0x00;
-		count = 0;
-		drawstring(game.buffer, 0,7,(byte*) s);
+		drawstring(buffer, 0,7,(byte*) s);
 	}
 }
 
@@ -106,61 +111,61 @@ byte etch(void){
 
 	while(INTERRUPT) {
 		if(UP_BUTTON) {
-			game.y--;
+			y--;
 		}
 		if(DOWN_BUTTON) {
-			game.y++;
+			y++;
 		}
 		if(LEFT_BUTTON) {
-			game.x--;
+			x--;
 		}
 		if(RIGHT_BUTTON) {
-			game.x++;
+			x++;
 		}
 		if(A_BUTTON) {
-			game.x = 51;
-			game.y = 32;
-			game.width = 1;
-			clearbuffer(game.buffer);
+			x = 51;
+			y = 32;
+			width = 1;
+			clearbuffer(buffer);
 			set_all_lcd_pages(OFF);
 		}
 		if(B_BUTTON) {
-			if (game.brightness == 0) {
-				game.brightness = 255;
-			} else if (game.brightness < 25) {
-				game.brightness = 0;
+			if (brightness == 0) {
+				brightness = 255;
+			} else if (brightness < 25) {
+				brightness = 0;
 			} else {
-				game.brightness -= 25;
+				brightness -= 25;
 			}
-			BACKLIGHT_BRIGHTNESS(game.brightness);
+			BACKLIGHT_BRIGHTNESS(brightness);
 
 			_delay_ms(200);
 		}
 		if(C_BUTTON) {
-			if (game.width > 8) {
-				game.width = 1;
+			if (width > 8) {
+				width = 1;
 			} else {
-				game.width +=2;
+				width +=2;
 			}
 			_delay_ms(200);
 		}
-		if((game.y-game.width/2)<0) {
-			game.y = LCDHEIGHT-1-game.width/2;
+		if((y-width/2)<0) {
+			y = LCDHEIGHT-1-width/2;
 		}
-		if ((game.y+game.width/2)>=LCDHEIGHT) {
-			game.y = game.width/2;
+		if ((y+width/2)>=LCDHEIGHT) {
+			y = width/2;
 		}
-		if ((game.x-game.width/2)<0) {
-			game.x = LCDWIDTH-1-game.width/2;
+		if ((x-width/2)<0) {
+			x = LCDWIDTH-1-width/2;
 		}
-		if ((game.x+game.width/2)>=LCDWIDTH) {
-			game.x = game.width/2;
+		if ((x+width/2)>=LCDWIDTH) {
+			x = width/2;
 		}
 		//
-		if (game.width < 2) {
-			setpixel(game.buffer,(byte)game.x,(byte)game.y);
+		if (width < 2) {
+			setpixel(buffer,(byte)x,(byte)y);
 		} else {
-			glcd_rect(game.buffer, game.x-game.width/2 , game.y-game.width/2, game.x+game.width/2 , game.y+game.width/2 , TRUE);
+			glcd_rect(buffer, x-width/2 , y-width/2, x+width/2 , y+width/2 , TRUE);
 		}
 		_delay_ms(20);
 	}

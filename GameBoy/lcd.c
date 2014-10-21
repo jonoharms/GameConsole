@@ -104,7 +104,6 @@ void write_buffer(byte buff[][MAX_PAGES]) {
   byte c, p;
   
   for(p = 0; p < MAX_PAGES; p++) {
-
     select_page(p);
 	select_column(0x00);    
     for(c = 0; c < MAX_COLUMNS; c++) {
