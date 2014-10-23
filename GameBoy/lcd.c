@@ -86,8 +86,8 @@ byte init_lcd(void) { // initialize lcd, must be run prior to using lcd
 }
 
 byte set_all_lcd_pages(byte val) {  //sets all pages to val
-	for(int page=0;page<MAX_PAGES; page++) {
-		for(int column = 0; column<MAX_COLUMNS; column++)	{
+	for(byte page=0;page<MAX_PAGES; page++) {
+		for(byte column = 0; column<MAX_COLUMNS; column++)	{
 			select_page(page);
 			select_column(column);
 			LCD_data_tx(val);
@@ -99,51 +99,51 @@ byte set_all_lcd_pages(byte val) {  //sets all pages to val
 /* Everything Below is adapted from
 from https://github.com/adafruit/ST7565-LCD */
   
-void write_buffer(byte buff[][MAX_PAGES]) {
+void write_buffer(byte* buff) {
 
-  byte c, p;
+  uint16_t c, p;
   
   for(p = 0; p < MAX_PAGES; p++) {
     select_page(p);
 	select_column(0x00);    
     for(c = 0; c < MAX_COLUMNS; c++) {
 	  select_column(c);
-      LCD_data_tx(buff[c][p]);
-    }
+      LCD_data_tx(buff[c+p*MAX_COLUMNS]);
+    } 
   }
 }
 
-void setpixel(byte buff[][MAX_PAGES], byte x, byte y) {
+void setpixel(byte* buff, byte x, byte y) {
 	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
 	return;
 
 	// x is which column
 	byte page = y/8;
 	byte pixel = y%8;
-	pixel = (_BV(pixel) | (buff[x][page])); 
+	pixel = (_BV(pixel) | (buff[x+page*MAX_COLUMNS])); 
 	
 	select_page(page);
 	select_column(x);
-	buff[x][page] |= pixel;
+	buff[x+page*MAX_COLUMNS] |= pixel;
 	LCD_data_tx(pixel);
 }
 
-void clearpixel(byte buff[][MAX_PAGES], byte x, byte y) {
+void clearpixel(byte* buff, byte x, byte y) {
 	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
 	return;
 
 	// x is which column
-	byte page = y/8;
-	byte pixel = y%8;
-	pixel = ((~_BV(pixel) & 0xff) & (buff[x][page]));
+	uint16_t page = y/8;
+	uint16_t pixel = y%8;
+	pixel = ((~_BV(pixel) & 0xff) & (buff[x+page*MAX_COLUMNS]));
 	
 	select_page(page);
 	select_column(x);
-	buff[x][page] &= pixel;
+	buff[(uint16_t)x+page*MAX_COLUMNS] &= pixel;
 	LCD_data_tx(pixel);
 }
 
-void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1) {
+void drawline(byte* buff,byte x0, byte y0, byte x1, byte y1) {
 
 	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
 	if (steep) {
@@ -182,7 +182,7 @@ void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1) {
 	}
 }
 
-void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c) {
+void drawchar(byte* buff, byte x, byte line, byte c) {
 	
 	if((c>MAX_ASCII) || (c<MIN_ASCII)) 
 		return;
@@ -190,7 +190,7 @@ void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c) {
 	
 	for (uint8_t i=0; i<FONT_WIDTH; i++ ) {
 		byte ascii = pgm_read_byte(font+FONT_WIDTH*c+i);
-		buff[x][line] = ascii;
+		buff[x+line*MAX_COLUMNS] = ascii;
 		select_page(line);
 		select_column(x);
 		LCD_data_tx(ascii);
@@ -198,7 +198,7 @@ void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c) {
 	}
 }
 
-void drawstring(byte buff[][MAX_PAGES], byte x, byte line, byte *c) {
+void drawstring(byte* buff, byte x, byte line, byte *c) {
 	while (c[0] != 0) {
 		drawchar(buff, x, line, *c);
 		c++;
@@ -213,11 +213,9 @@ void drawstring(byte buff[][MAX_PAGES], byte x, byte line, byte *c) {
 
 }
 
-void clearbuffer(byte buff[][MAX_PAGES]) {
-	for (byte i= 0; i<MAX_PAGES; i++) {
-		for(byte j = 0; j<MAX_COLUMNS; j++) {
-			buff[j][i] = 0x00;
-		}
+void clearbuffer(byte* buff) {
+	for (uint16_t i = 0; i<BUFFER_SIZE; i++) {
+		buff[i] = 0x00;
 	}
 }
 
@@ -227,7 +225,7 @@ void clearbuffer(byte buff[][MAX_PAGES]) {
 //                (x2, y2) - the end coordinate
 //                fill  - YES or NO
 // Dependencies:  drawline()
-void glcd_rect(byte buff[][MAX_PAGES], byte x1, byte y1, byte x2, byte y2, byte fill)
+void glcd_rect(byte* buff, byte x1, byte y1, byte x2, byte y2, byte fill)
 {
 	if(fill)
 	{
@@ -259,7 +257,7 @@ void glcd_rect(byte buff[][MAX_PAGES], byte x1, byte y1, byte x2, byte y2, byte 
 // Inputs:        (x1, y1) - the start coordinate
 //                (x2, y2) - the end coordinate
 //                width  - The number of pixels wide
-void glcd_bar(byte buff[][MAX_PAGES], byte x1, byte y1, byte x2, byte y2, byte width)
+void glcd_bar(byte* buff, byte x1, byte y1, byte x2, byte y2, byte width)
 {
 	int16_t x, y, addx, addy, j;
 	int16_t P, dx, dy, c1, c2;
@@ -345,7 +343,7 @@ void glcd_bar(byte buff[][MAX_PAGES], byte x1, byte y1, byte x2, byte y2, byte w
 //                radius - the radius of the circle
 //                fill - YES or NO
 //                colour - ON or OFF
-void glcd_circle(byte buff[][MAX_PAGES], byte x, byte y, byte radius, byte fill)
+void glcd_circle(byte* buff, byte x, byte y, byte radius, byte fill)
 {
 	int16_t a, b, P;
 	a = 0;
@@ -380,7 +378,7 @@ void glcd_circle(byte buff[][MAX_PAGES], byte x, byte y, byte radius, byte fill)
 	} while(a <= b);
 }
 
-void draw_byte(byte buff[][MAX_PAGES], byte x, byte y, byte data) {
+void draw_byte(byte* buff, byte x, byte y, byte data) {
 	char s[4];
 	sprintf(s,"%03d",data);
 	s[3] = 0x00;

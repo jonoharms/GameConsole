@@ -11,7 +11,7 @@
 // NUMBERS
 #define MAX_PAGES 8
 #define MAX_COLUMNS 102
-#define BUFFER_SIZE MAX_PAGES*MAX_COLUMNS
+#define BUFFER_SIZE 816
 #define LCDWIDTH MAX_COLUMNS
 #define LCDHEIGHT MAX_PAGES*8
 #define CMD_PAGE 0xB0
@@ -54,11 +54,11 @@ byte select_page (byte page);
 byte select_column (byte column);
 byte init_lcd(void);
 byte set_all_lcd_pages(byte val);
-void write_buffer(byte buff[][MAX_PAGES]);
-void setpixel(byte buff[][MAX_PAGES], byte x, byte y);
-void clearpixel(byte buff[][MAX_PAGES], byte x, byte y);
-void drawline(byte buff[][MAX_PAGES],byte x0, byte y0, byte x1, byte y1);
-void drawchar(byte buff[][MAX_PAGES], byte x, byte line, byte c);
-void drawstring(byte buff[][MAX_PAGES], byte x, byte line, byte *c);
-void clearbuffer(byte buff[][MAX_PAGES]);
-void glcd_rect(byte buff[][MAX_PAGES], byte x1, byte y1, byte x2, byte y2, byte fill);
+void write_buffer(byte* buff);
+void setpixel(byte* buff, byte x, byte y);
+void clearpixel(byte* buff, byte x, byte y);
+void drawline(byte* buff,byte x0, byte y0, byte x1, byte y1);
+void drawchar(byte* buff, byte x, byte line, byte c);
+void drawstring(byte* buff, byte x, byte line, byte *c);
+void clearbuffer(byte* buff);
+void glcd_rect(byte* buff, byte x1, byte y1, byte x2, byte y2, byte fill);

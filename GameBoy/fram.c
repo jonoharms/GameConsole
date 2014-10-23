@@ -19,9 +19,9 @@ void init_fram(void) {
 	//WP_ENABLE;
 }
 
-int8_t write_fram(uint32_t address, byte *buf, byte count) {
-	byte msb = ((address>>8) & 0xff);
-	byte lsb = address & 0xff;
+int8_t write_fram(uint16_t address, byte *buf, uint16_t count) {
+	byte msb = ((address>>8) & 0x00ff);
+	byte lsb = address & 0x00ff;
 
 	FRAM_CHIP_SELECT;
 	spi_tx(CMD_WREN);
@@ -32,22 +32,22 @@ int8_t write_fram(uint32_t address, byte *buf, byte count) {
 	spi_tx(CMD_WRITE);
 	spi_tx(msb);
 	spi_tx(lsb);
-	for (int i = 0;i < count;i++) {
+	for (uint16_t i = 0;i < count;i++) {
 		spi_tx(buf[i]);
 	}
 	FRAM_CHIP_DESELECT;
 	return 0;
 }
 
-int8_t read_fram(uint32_t address, byte *buf, byte count) {
-	byte msb = ((address>>8) & 0xff);
-	byte lsb = address & 0xff;
+int8_t read_fram(uint16_t address, byte *buf, uint16_t count) {
+	byte msb = ((address>>8) & 0x00ff);
+	byte lsb = address & 0x00ff;
 	
 	FRAM_CHIP_SELECT;
 	spi_tx(CMD_READ);
 	spi_tx(msb);
 	spi_tx(lsb);
-	for (int i=0; i < count; i++) {
+	for (uint16_t i=0; i < count; i++) {
 		buf[i] = spi_txrx(0x00);
 	}
 	FRAM_CHIP_DESELECT;
