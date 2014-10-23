@@ -19,7 +19,7 @@ void init_fram(void) {
 	//WP_ENABLE;
 }
 
-int8_t write_fram(uint16_t address, byte *buf, byte count) {
+int8_t write_fram(uint32_t address, byte *buf, byte count) {
 	byte msb = ((address>>8) & 0xff);
 	byte lsb = address & 0xff;
 
@@ -39,7 +39,7 @@ int8_t write_fram(uint16_t address, byte *buf, byte count) {
 	return 0;
 }
 
-int8_t read_fram(uint16_t address, byte *buf, byte count) {
+int8_t read_fram(uint32_t address, byte *buf, byte count) {
 	byte msb = ((address>>8) & 0xff);
 	byte lsb = address & 0xff;
 	
